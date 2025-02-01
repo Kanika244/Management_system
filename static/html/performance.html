@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Reviews</title>
+    <link rel="stylesheet" href="/static/css/performance.css"> <!-- External CSS -->
+</head>
+<body>
+    <div class="container">
+        <h2>Performance Reviews</h2>
+        <form id="performanceReviewForm">
+            <label for="employeeEmail">Employee Email:</label>
+            <input type="email" id="employeeEmail" required>
+
+            <label for="taskId">Task ID:</label>
+            <input type="text" id="taskId" required>
+
+            <label for="rating">Rating (1-5):</label>
+            <input type="number" id="rating" min="1" max="5" required>
+
+            <label for="comments">Comments:</label>
+            <textarea id="comments" required></textarea>
+
+            <label for="review_date">Review Date</label>
+            <input type="date" id="review_date" required>
+
+            <button type="submit">Submit Review</button>
+        </form>
+
+        <h3>View Performance Reviews</h3>
+        <input type="email" id="searchEmail" placeholder="Enter employee email to search">
+        <button onclick="fetchPerformanceReviews()">Search</button>
+        <div id="reviewsList"></div>
+    </div>
+
+    <script src="/static/js/performance_reviews.js"></script> <!-- External JS -->
+</body>
+</html>

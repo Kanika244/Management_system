@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/static/css/admin.css"> <!-- External CSS -->
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button class="manage-employees" onclick="redirectToEmployeeManagement()">Manage Employees</button>
+    <button class="performance-reviews" onclick="redirectToPerformance()">Performance Reviews</button>
+  </header>
+
+  <div class="container">
+    <h2>Assign Task</h2>
+    <button class="assign-task-btn" onclick="openModal()">Assign New Task</button>
+    <h2>Assigned Tasks</h2>
+    <div id="taskListContainer">
+      <table id="taskTable" border="1">
+        <thead>
+          <tr>
+            <th>Task Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Deadline</th>
+            <th>Assigned By</th>
+            <th>Assigned_to</th>
+          </tr>
+        </thead>
+        <tbody id="taskList">
+          <!-- Task rows will be inserted dynamically here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal for Assigning Tasks -->
+  <div class="modal" id="assignTaskModal">
+    <div class="modal-content">
+      <h3>Assign Task</h3>
+      <form id="assignTaskForm">
+        <label for="assignedToEmail">Assign To (Employee Email):</label>
+        <input type="email" id="assignedToEmail" placeholder="Enter employee's email" required>
+
+        <label for="taskTitle">Task Title:</label>
+        <input type="text" id="taskTitle" required>
+
+        <label for="taskDescription">Task Description:</label>
+        <textarea id="taskDescription" required></textarea>
+
+        <label for="taskStatus">Status:</label>
+        <select id="taskStatus" required>
+          <option value="Not Started">Not Started</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <label for="taskPriority">Priority:</label>
+        <select id="taskPriority" required>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <label for="taskDeadline">Deadline:</label>
+        <input type="date" id="taskDeadline" required>
+
+        <label for="assignedBy">Assigned By (Manager Email):</label>
+        <input type="email" id="assignedBy" placeholder="Enter your email" required>
+
+        <button type="submit">Assign Task</button>
+        <button type="button" onclick="closeModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <script src="/static/js/admin.js"></script> <!-- External JS -->
+</body>
+</html>

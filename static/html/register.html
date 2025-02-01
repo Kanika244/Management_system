@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <title>Register - Management System</title>
+</head>
+<body>
+  <div id="registerContainer">
+    <h1>MANAGEMENT SYSTEM</h1>
+    <h2>Register</h2>
+    <form id="registerForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+      <label for="role">Role</label>
+      <select id="role" name="role" required>
+        <option value="" disabled selected>Select Your Role</option>
+        <option value="ADMIN">ADMIN</option>
+        <option value="MANAGER">MANAGER</option>
+        <option value="EMPLOYEE">EMPLOYEE</option>
+      </select>
+      <button type="submit">Register</button>
+    </form>
+    <p id="registerMessage"></p>
+    <script src="/static/js/register.js"></script>
+    <div>
+        <p>Already have an account? <a href="/static/html/login.html">Login here</a></p>
+    </div>
+  </div>
+
+
+</body>
+</html>

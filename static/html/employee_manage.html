@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Management</title>
+  <link rel="stylesheet" href="/static/css/employee_management.css">
+</head>
+<body>
+  <header>
+    <h1>Employee Management</h1>
+  </header>
+
+  <div class="container">
+    <h2>Add New Employee</h2>
+    <form id="addEmployeeForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="role">Role:</label>
+      <input type="text" id="role" required>
+
+      <label for="job_title">Job Title:</label>
+      <input type="text" id="job_title" required>
+
+      <label for="department">Department:</label>
+      <input type="text" id="department" required>
+
+      <button type="submit">Add Employee</button>
+    </form>
+
+    <h2>Employee List</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Job Title</th>
+          <th>Department</th>
+        </tr>
+      </thead>
+      <tbody id="employeeList">
+        <!-- Employee rows will be inserted dynamically here -->
+      </tbody>
+    </table>
+  </div>
+
+
+  </div>
+
+  <script src="/static/js/employee_management.js"></script>
+</body>
+</html>

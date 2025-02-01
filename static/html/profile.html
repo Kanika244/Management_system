@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Profile</title>
+  <link rel="stylesheet" href="/static/css/profile.css">
+</head>
+<body>
+  <div class="profile-container">
+    <div class="profile-header">
+      <img id="profilePic" src="/static/images/image.png" alt="Profile Picture" class="profile-pic">
+      <h2 id="userName">Loading...</h2>
+    </div>
+    <div class="profile-info">
+      <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+      <p><strong>Role:</strong> <span id="userRole">Loading...</span></p>
+      <button id="editProfileBtn">Edit Profile</button>
+    </div>
+  </div>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit Profile</h3>
+      <form id="editProfileForm">
+        <label for="editName">Name:</label>
+        <input type="text" id="editName" placeholder="Enter your name">
+
+        <label for="editEmail">Email:</label>
+        <input type="email" id="editEmail" placeholder="Enter your email">
+
+        <label for="editCurrentPassword">Current Password:</label>
+        <input type="password" id="editCurrentPassword" placeholder="Enter your current password">
+
+        <label for="editNewPassword">New Password:</label>
+        <input type="password" id="editNewPassword" placeholder="Enter new password (if changing)">
+
+        <button type="submit">Save Changes</button>
+        <button type="button" id="cancelEdit">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/profile.js"></script>
+</body>
+</html>
