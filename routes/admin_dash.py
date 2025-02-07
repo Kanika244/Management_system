@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
-from database import user_collection, task_collection  # MongoDB connection
-from models import Task  # Task model
+from fastapi import APIRouter, HTTPException, Query
+from database import user_collection, task_collection , employee_collection  # MongoDB connection
+from models import Task  , Employee,EmployeeResponse# Task model
 from typing import List
 from datetime import datetime
 
@@ -65,6 +65,46 @@ async def get_tasks():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error Loading tasks: {str(e)}")
+    
 
+@router.get("/get_employees",response_model=EmployeeResponse)
+async def search_employees(query: str = Query(None, description="Search employees by name, role, job title, or department"),
+                           page:int=Query(1,description="Page Number",ge=1),
+                           limit:int=Query(5,description="Number of results per page",ge=1,le=50)):
+      try:
+        filter_query = {}
+
+        if query:
+            filter_query={
+                 "$or": [
+                {"name": {"$regex": query, "$options": "i"}},
+                {"role": {"$regex": query, "$options": "i"}},
+                {"job_title": {"$regex": query, "$options": "i"}},
+                {"department": {"$regex": query, "$options": "i"}},
+            ]
+
+            }
+
+           
+        
+
+        total = await employee_collection.count_documents(filter_query)
+        print(total)
+        employee_data= await employee_collection.find(filter_query).skip((page - 1) * limit).limit(limit).to_list(length=None)
+
+        employees = [
+            Employee(
+                id=str(emp["_id"]),  # Convert ObjectId to string
+                name=emp["name"],
+                role=emp["role"],
+                job_title=emp["job_title"],
+                department=emp["department"]
+            )
+            for emp in employee_data
+        ]
+        return EmployeeResponse(employees=employees,total=total)
+
+      except Exception as e:
+          raise HTTPException(status_code=500, detail=f"Error fetching employees: {str(e)}")
 
     

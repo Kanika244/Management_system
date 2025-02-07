@@ -3,7 +3,7 @@ const editProfileBtn = document.getElementById("editProfileBtn");
 const editModal = document.getElementById("editModal");
 const cancelEdit = document.getElementById("cancelEdit");
 const editProfileForm = document.getElementById("editProfileForm");
-
+const profileUpload = document.getElementById("profileupload");
 // Fetch User Profile
 async function fetchProfile() {
   const email = localStorage.getItem("email");
@@ -34,6 +34,41 @@ async function fetchProfile() {
     console.error("Error fetching profile:", error);
   }
 }
+
+profileUpload.addEventListener("change", async function () {
+  const file = this.files[0];
+  if (!file) return;
+
+  const formdata = new FormData();
+  formdata.append("file", file);
+
+  try {
+      const response = await fetch(`${baseURL}/profile/upload_image/${localStorage.getItem("email")}`, {
+          method: "POST",
+          body: formdata,
+      });
+      console.log(response)
+
+      if (!response.ok) {
+          throw new Error("Failed to update profile picture.");
+      }
+
+      const data = await response.json();
+      console.log("Server Response:", data); // Log the response
+
+      if (!data || !data.image_url) {
+          throw new Error("No image URL returned from the server.");
+      }
+
+      // Update the profile picture in the DOM
+      const profilePic = document.getElementById("profilePic");
+      profilePic.src = data.image_url; // Ensure this matches the backend response
+      alert("Profile picture updated successfully!");
+  } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      alert("Error uploading profile picture. Please try again.");
+  }
+});
 
 // Open Edit Modal
 editProfileBtn.addEventListener("click", () => {

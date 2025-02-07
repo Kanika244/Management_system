@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Notifications</title>
+  <link rel="stylesheet" href="/static/css/admin.css"> <!-- External CSS -->
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard - Notifications</h1>
+    <button class="dashboard-btn" onclick="redirectToDashboard()">Back to Dashboard</button>
+  </header>
+
+  <div class="container">
+    <h2>Add New Notification</h2>
+    <form id="notificationForm">
+      <label for="recipientEmail">Employee Email:</label>
+      <input type="email" id="recipientEmail" placeholder="Enter employee's email" required>
+
+      <label for="notificationTitle">Title:</label>
+      <input type="text" id="notificationTitle" placeholder="Enter notification title" required>
+
+      <label for="notificationMessage">Message:</label>
+      <textarea id="notificationMessage" placeholder="Enter notification message" required></textarea>
+
+      <button type="submit">Send Notification</button>
+    </form>
+  </div>
+
+  <div class="container">
+    <h2>Existing Notifications</h2>
+    <table id="notificationTable">
+      <thead>
+        <tr>
+          <th>Employee Email</th>
+          <th>Title</th>
+          <th>Message</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="notificationList">
+        <!-- Notifications will be dynamically inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="/static/js/notifications.js"></script> <!-- External JS -->
+</body>
+</html>

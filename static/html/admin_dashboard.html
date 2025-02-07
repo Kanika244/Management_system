@@ -11,9 +11,43 @@
     <h1>Admin Dashboard</h1>
     <button class="manage-employees" onclick="redirectToEmployeeManagement()">Manage Employees</button>
     <button class="performance-reviews" onclick="redirectToPerformance()">Performance Reviews</button>
+    <button class="manage_notifications" onclick="redirectToNotifications()">Manage Notifictions</button>
+
+    <label class="toggle-switch">
+      <input type="checkbox" id="modeToggle">
+      <span class="slider">
+        <i class="icon fas fa-sun"></i>
+      </span>
+    </label>
   </header>
 
   <div class="container">
+    <h2>Search Employees</h2>
+    <div class="search-container">
+      <input type="text" id="searchEmployee" placeholder="Search employees...">
+    </div>
+
+    <h2>Employee List</h2>
+    <table id="employeeTable" border="1">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Job Title</th>
+          <th>Department</th>
+        </tr>
+      </thead>
+      <tbody id="employeeList">
+        <!-- Employee data will be inserted dynamically here -->
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button id="prevPage" disabled>Previous</button>
+      <span id="pageNumber">Page 1</span>
+      <button id="nextPage">Next</button>
+    </div>
+    
     <h2>Assign Task</h2>
     <button class="assign-task-btn" onclick="openModal()">Assign New Task</button>
     <h2>Assigned Tasks</h2>

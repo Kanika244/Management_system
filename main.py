@@ -1,7 +1,7 @@
 from fastapi import FastAPI , Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from routes import auth , employee , profile_routes , admin_dash , employee_manage , performance_reviews , summary
+from routes import auth , employee , profile_routes , admin_dash , employee_manage , performance_reviews , summary , reviews ,notifications
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -23,6 +23,8 @@ app.include_router(admin_dash.router)
 app.include_router(employee_manage.router)
 app.include_router(performance_reviews.router)
 app.include_router(summary.router)
+app.include_router(reviews.router)
+app.include_router(notifications.router)
 
 @app.get("/")
 async def register_page():

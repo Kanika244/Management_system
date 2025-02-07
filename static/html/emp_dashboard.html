@@ -74,6 +74,13 @@
       margin-top: 20px;
     }
 
+    .notifications{
+      background: #ffcc00;
+      padding:10px;
+      margin-top: 20px;
+      border-radius:5px;
+    }
+
     
   </style>
 </head>
@@ -88,9 +95,14 @@
       onclick="redirectToProfile()" 
       title="Go to Profile"
     >
-      <img src="https://via.placeholder.com/40" alt="Profile Picture">
+      <img src="/static/images/image.png" alt="Profile Picture">
     </div>
   </header>
+
+  <div class="container">
+    <h2>Important Notifications</h2>
+    <div id="notifications" class="notifications">Loading.....</div>
+  </div>
 
   <!-- Container Section -->
   <div class="container">
@@ -116,6 +128,7 @@
       <div id="taskCompletionSummary" class="summary-item"></div>
       <div id="employeePerformanceSummary" class="summary-item"></div>
       <div id="overdueTasksSummary" class="summary-item"></div>
+      <div id="performanceReviews" class="summary-item"></div> 
 
     </div>
   </div>
@@ -128,6 +141,23 @@
     // Redirect to profile page
     function redirectToProfile() {
       window.location.href = "/static/html/profile.html"; // Update path as needed
+    }
+
+    async function fetchNotifications(){
+      try{
+        const response = await fetch (`${baseURL}/get_notifications/${email}`);
+        const data = await response.json();
+        console.log(data)
+
+        const notificationsdiv  = document.getElementById("notifications");
+        notificationsdiv.innerHTML=data.length
+        ? data.map(notif => `<p>${notif.message}</p>`).join("")
+        :"<p>No new notification</p>";
+
+
+      }catch(error){
+        console.error("Error fetching notifications:",error);
+      }
     }
 
     // Fetch tasks assigned to the user
@@ -205,13 +235,20 @@
         }
 
         const summary = await response.json();
+        console.log("API Response",summary)
+
+
+        if (!summary.task_completion_summary) {
+          console.warn("task_completion_summary is missing in the API response.");
+          summary.task_completion_summary = []; // Default to an empty array
+    }
 
         // Display Task Completion Summary
         const taskCompletionSummary = document.getElementById("taskCompletionSummary");
-        if (summary.task_completion_summary.length > 0) {
+        if (Array.isArray(summary?.task_Completion_summary)&& summary.task_Completion_summary.some(item => item.total_tasks_completed > 0)) {
           taskCompletionSummary.innerHTML = `
             <h3>Task Completion</h3>
-            <p>Total Tasks Completed: ${summary.task_completion_summary[0].total_tasks_completed}</p>
+            <p>Total Tasks Completed: ${summary.task_Completion_summary[0].total_tasks_completed}</p>
           `;
         } else {
           taskCompletionSummary.innerHTML = `
@@ -222,10 +259,10 @@
 
         // Display Employee Performance Summary
         const employeePerformanceSummary = document.getElementById("employeePerformanceSummary");
-        if (summary.employee_performance_summary.length > 0) {
+        if (Array.isArray(summary?.employee_performance_summary)&& summary.employee_performance_summary.some(item => item.average_rating !== undefined)) {
           employeePerformanceSummary.innerHTML = `
             <h3>Employee Performance</h3>
-            <p>Average Rating: ${summary.employee_performance_summary[0].average_rating.toFixed(2)}</p>
+            <p>Average Rating: ${summary.employee_performance_summary[0].average_rating?.toFixed(2)}</p>
             <p>Total Tasks Rated: ${summary.employee_performance_summary[0].total_tasks_rated}</p>
           `;
         } else {
@@ -237,10 +274,10 @@
 
         // Display Overdue Tasks Summary
         const overdueTasksSummary = document.getElementById("overdueTasksSummary");
-        if (summary.overdue_tasks_summary.length > 0) {
+        if (Array.isArray(summary?.overdue_tasks)&& summary.overdue_tasks.some(item => item.overdue_tasks  > 0)) {
           overdueTasksSummary.innerHTML = `
             <h3>Overdue Tasks</h3>
-            <p>Total Overdue Tasks: ${summary.overdue_tasks_summary[0].total_overdue_tasks}</p>
+            <p>Total Overdue Tasks: ${summary.overdue_tasks[0].total_overdue_tasks}</p>
           `;
         } else {
           overdueTasksSummary.innerHTML = `
@@ -252,7 +289,39 @@
         console.error("Error fetching summary reports:", error);
       }
     }
-     
+    async function fetchReviews() {
+      try {
+        const response = await fetch(`${baseURL}/reviews/${email}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch performance reviews.");
+
+        const data = await response.json();
+        const reviewContainer = document.getElementById("performanceReviews");
+
+        if (data.reviews && data.reviews.length > 0) {
+          reviewContainer.innerHTML = "<h3>Performance Reviews</h3>";
+          data.reviews.forEach(review => {
+          reviewContainer.innerHTML += `
+          <div class="review-item">
+            <p><strong>Task ID:</strong> ${review.task_id}</p>
+            <p><strong>Rating:</strong> ${review.rating}</p>
+            <p><strong>Comments:</strong> ${review.comments}</p>
+            <p><strong>Date:</strong> ${new Date(review.review_date).toLocaleDateString()}</p>
+          </div>
+          <hr>
+        `;
+          });
+        } else {
+          reviewContainer.innerHTML = "<h3>Performance Reviews</h3><p>No reviews available.</p>";
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    }
+
+    
 
 
 
@@ -260,7 +329,9 @@
     // Fetch tasks on page load
     window.onload = ()=>{
       fetchTasks();
-      fetchsummaryReports();};
+      fetchsummaryReports();
+      fetchReviews();
+      fetchNotifications();}
     ;
   </script>
 </body>

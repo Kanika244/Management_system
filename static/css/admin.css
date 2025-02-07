@@ -1,17 +1,51 @@
+/* Root Variables for Light & Dark Mode */
+:root {
+  --background-color: #f5f7fa;
+  --text-color: #333;
+  --header-bg: #007BFF;
+  --header-text: white;
+  --button-bg: linear-gradient(135deg, #007BFF, #0056b3);
+  --button-hover-bg: linear-gradient(135deg, #0056b3, #004494);
+  --button-text: white;
+  --table-border: #ddd;
+  --modal-bg: white;
+  --modal-text: #333;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --shadow-light: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode {
+  --background-color: #1e1e1e;
+  --text-color: #eee;
+  --header-bg: #333;
+  --header-text: white;
+  --button-bg: linear-gradient(135deg, #444, #222);
+  --button-hover-bg: linear-gradient(135deg, #222, #111);
+  --button-text: white;
+  --table-border: #444;
+  --modal-bg: #333;
+  --modal-text: white;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --shadow-light: 0px 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
-  background: #f9f9f9;
+  background: var(--background-color);
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .container {
   max-width: 1200px;
   margin: 20px auto;
   padding: 20px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  background: var(--modal-bg);
+  box-shadow: var(--shadow-light);
+  border-radius: 10px;
 }
 
 /* Header */
@@ -19,10 +53,11 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #007BFF;
-  color: white;
+  background: var(--header-bg);
+  color: var(--header-text);
   padding: 15px 20px;
-  border-radius: 8px 8px 0 0;
+  border-radius: 10px 10px 0 0;
+  transition: background 0.3s ease;
 }
 
 header h1 {
@@ -30,37 +65,89 @@ header h1 {
   font-size: 24px;
 }
 
-.profile-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: white;
+/* Toggle Switch for Dark Mode */
+.toggle-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  gap: 10px;
+}
+
+.toggle-label {
+  font-size: 14px;
+  color: var(--header-text);
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
   cursor: pointer;
+  width: 100%;
+  height: 100%;
+  background: #ddd;
+  border-radius: 12px;
+  transition: 0.3s;
 }
 
-.profile-icon img {
-  width: 32px;
-  height: 32px;
+.toggle-slider .icon{
+  font-size:14px;
+  color:white;
+  transition: transform 0.3s ease , opacity 0.3s ease;
+}
+
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3px;
+  background: white;
   border-radius: 50%;
+  transition: 0.3s;
 }
 
-/* Assign Task Button */
-.assign-task-btn {
-  background: #007BFF;
-  color: white;
+input:checked + .toggle-slider {
+  background: var(--button-bg);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+input:checked + .toggle-slider .icon {
+  font-size: 14px;
+  color: yellow;
+  transform: rotate(180deg);
+}
+
+/* Buttons */
+button {
+  background: var(--button-bg);
+  color: var(--button-text);
   border: none;
   padding: 10px 15px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
   transition: 0.3s ease;
+  box-shadow: var(--shadow-light);
 }
 
-.assign-task-btn:hover {
-  background: #0056b3;
+button:hover {
+  background: var(--button-hover-bg);
+  transform: translateY(-2px);
 }
 
 /* Task Table */
@@ -68,26 +155,24 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  background: var(--modal-bg);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 th, td {
-  padding: 12px;
+  padding: 14px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--table-border);
 }
 
 th {
-  background-color: #007BFF;
-  color: white;
+  background-color: var(--header-bg);
+  color: var(--header-text);
 }
 
 tr:hover {
-  background-color: #f5f5f5;
-}
-
-.status-dropdown {
-  padding: 5px;
-  font-size: 14px;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Modal Styling */
@@ -97,10 +182,11 @@ tr:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
+  background: var(--modal-bg);
+  color: var(--modal-text);
+  padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-light);
   width: 400px;
   max-width: 90%;
   z-index: 1000;
@@ -125,15 +211,15 @@ tr:hover {
 .modal-content textarea,
 .modal-content select {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   margin-top: 5px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--table-border);
   border-radius: 5px;
 }
 
 .modal-content button {
   margin-top: 15px;
-  padding: 10px;
+  padding: 12px;
   border: none;
   cursor: pointer;
   border-radius: 5px;
@@ -141,12 +227,12 @@ tr:hover {
 }
 
 .modal-content button[type="submit"] {
-  background: #007BFF;
-  color: white;
+  background: var(--button-bg);
+  color: var(--button-text);
 }
 
 .modal-content button[type="submit"]:hover {
-  background: #0056b3;
+  background: var(--button-hover-bg);
 }
 
 .modal-content button[type="button"] {
@@ -166,7 +252,7 @@ tr:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay-bg);
   z-index: 999;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
@@ -182,9 +268,9 @@ tr:hover {
 /* Task List Container */
 .task-list-container {
   margin-top: 30px;
-  background: #fff;
+  background: var(--modal-bg);
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-light);
   border-radius: 8px;
 }
 

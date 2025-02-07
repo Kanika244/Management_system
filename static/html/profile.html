@@ -9,7 +9,11 @@
 <body>
   <div class="profile-container">
     <div class="profile-header">
-      <img id="profilePic" src="/static/images/image.png" alt="Profile Picture" class="profile-pic">
+      <label for="profileupload" class="profile-pic-label">
+        <img id="profilePic" src="/static/images/image.png" alt="Profile Picture" class="profile-pic">
+      </label>
+      <input type="file" id="profileupload" accept="image/*" style="display: none;">
+      
       <h2 id="userName">Loading...</h2>
     </div>
     <div class="profile-info">

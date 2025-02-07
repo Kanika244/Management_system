@@ -59,5 +59,16 @@ class OTPverify(BaseModel):
     email:EmailStr
     otp:str
 
+class Notification(BaseModel):
+    id:str = None
+    title:str
+    message:str
+    email:str
+    timestamp:datetime = datetime.utcnow()
+
+class EmployeeResponse(BaseModel):
+    employees:List[Employee]
+    total:int
+
 
 
