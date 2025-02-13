@@ -1,4 +1,6 @@
+import os
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import FileResponse
 from database import user_collection, task_collection , employee_collection  # MongoDB connection
 from models import Task  , Employee,EmployeeResponse# Task model
 from typing import List
@@ -7,6 +9,10 @@ from datetime import datetime
 tasks=[]
 
 router = APIRouter()
+
+UPLOAD_DIR = "uploads"
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/assign_task", response_model=dict)
 async def assign_task_using_email(task: Task):
@@ -29,11 +35,12 @@ async def assign_task_using_email(task: Task):
 @router.get("/get_tasks")
 async def get_tasks():
     try:
-        tasks_cursor = await task_collection.find({}, {"_id": 1, "title": 1, "description": 1, "status": 1, "priority": 1, "deadline": 1, "assigned_by": 1, "assigned_to": 1}).to_list(length=None)
+        tasks_cursor = await task_collection.find({}, {"_id": 1, "title": 1, "description": 1, "status": 1, "priority": 1, "deadline": 1, "assigned_by": 1, "assigned_to": 1 , "documents":1}).to_list(length=None)
         current_date=datetime.now()
         overdue=[]
         for task in tasks_cursor:
             task["_id"] = str(task.get("_id", "")) 
+            task["documents"] = [str(doc) for doc in task.get("documents", [])]
 
 
             if task.get("deadline"):
@@ -106,5 +113,16 @@ async def search_employees(query: str = Query(None, description="Search employee
 
       except Exception as e:
           raise HTTPException(status_code=500, detail=f"Error fetching employees: {str(e)}")
+      
+
+@router.get("/download_document/{filename}")
+async def download_document(filename: str):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    
+    # Check if file exists
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    return FileResponse(file_path, filename=filename)
 
     

@@ -1,4 +1,5 @@
 const baseURL = "http://127.0.0.1:8000";
+const token = localStorage.getItem("access_token");
 let currentPage=1;
 const pageSize = 5;
 
@@ -31,6 +32,89 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
+document.addEventListener("DOMContentLoaded", function () {
+  fetchLeaveRequests(); // Fetch leave requests on page load
+});
+
+async function fetchLeaveRequests() {
+  try {
+      const response = await fetch(`${baseURL}/get_leave_requests`, {
+          headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+          throw new Error("Failed to fetch leave requests.");
+      }
+
+      const leaveRequests = await response.json();
+      const leaveList = document.getElementById("leaveList");
+      leaveList.innerHTML = ""; // Clear existing entries
+
+      if (leaveRequests.length === 0) {
+          leaveList.innerHTML = `<tr><td colspan="4" style="text-align:center;">No leave requests available.</td></tr>`;
+          return;
+      }
+
+      leaveRequests.forEach(request => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+              <td>${request.email}</td>
+              <td>${request.reason}</td>
+              <td>${request.status}</td>
+              <td>
+                  ${request.status === "Pending" ? `
+                      <button class="approve-btn" onclick="updateLeaveStatus('${request.id}', 'Approved')">Approve</button>
+                      <button class="reject-btn" onclick="updateLeaveStatus('${request.id}', 'Rejected')">Reject</button>
+                  ` : request.status}
+              </td>
+          `;
+          leaveList.appendChild(row);
+      });
+
+  } catch (error) {
+      console.error("Error fetching leave requests:", error);
+      alert("Error loading leave requests.");
+  }
+}
+
+async function updateLeaveStatus(id, newStatus) {
+  try {
+    console.log(id)
+
+    if (!id || id === "undefined") {  
+      console.error("Error: Invalid leave request ID.");
+      alert("Invalid leave request ID.");
+      return;
+  }
+
+      const response = await fetch(`${baseURL}/update_leave_status/${id}`, {
+          method: "PATCH",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
+      });
+
+      console.log(response.status)
+
+      const responseData = await response.json();
+      console.log("Response JSON:", responseData); 
+
+      if (!response.ok) {
+          throw new Error("Failed to update leave status.");
+      }
+
+      alert(`Leave request ${newStatus.toLowerCase()} successfully.`);
+      fetchLeaveRequests(); // Refresh leave requests list
+
+  } catch (error) {
+      console.error("Error updating leave status:", error.message);
+      alert(`Error updating leave request:${error.message}`);
+  }
+}
+
+
 async function searchEmployees(page=1){
   
   const query = document.getElementById("searchEmployee").value.trim();
@@ -45,6 +129,8 @@ async function searchEmployees(page=1){
       url += `&query=${encodeURIComponent(query)}`;
     }
 
+    console.log(`Fetching data from ${url}`)
+
     const response = await fetch(url);
     
     if (!response.ok) {
@@ -55,7 +141,10 @@ async function searchEmployees(page=1){
 
 
     const response_data = await response.json();
+    console.log(response_data)
+
     const employees = response_data.employees  || [];
+    const total = response_data.total || 0;
     const totalPages = Math.ceil(response_data.total / pageSize);
 
 
@@ -104,10 +193,10 @@ document.getElementById("nextPage").addEventListener("click", () => {
 });
 
 
-document.getElementById("searchEmployee").addEventListener("keyup",searchEmployees);
+document.getElementById("searchEmployee").addEventListener("keyup",searchEmployees(1));
 
 // Fetch employees when the page loads
-document.addEventListener("DOMContentLoaded", searchEmployees);
+document.addEventListener("DOMContentLoaded", searchEmployees(1));
 
 
 
@@ -221,6 +310,13 @@ async function fetchTasks() {
 
       tasks.All_Tasks.forEach(task => {
             const row = document.createElement("tr");
+
+            let documentLinks = "No documents";
+            if (task.documents.length > 0) {
+                documentLinks = task.documents
+                  .map(doc => `<a href="${baseURL}/download_document/${doc.split("/").pop()}" target="_blank">Download</a>`)
+                  .join(", ");
+            }
             
             row.innerHTML = `
                 <td>${task.title}</td>
@@ -230,6 +326,7 @@ async function fetchTasks() {
                 <td>${task.deadline ? new Date(task.deadline).toLocaleDateString() : "N/A"}</td>
                 <td>${task.assigned_by}</td>
                 <td>${task.assigned_to}</td>
+                <td> ${documentLinks}</td>
             `;
             
             taskList.appendChild(row);
@@ -239,6 +336,7 @@ async function fetchTasks() {
         document.getElementById("taskList").innerHTML = `<tr><td colspan="7">Error loading tasks</td></tr>`;
     }
 }
+
 
 document.addEventListener("DOMContentLoaded", fetchTasks);
 

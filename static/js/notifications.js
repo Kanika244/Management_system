@@ -9,7 +9,7 @@ function redirectToDashboard() {
 // Fetch and display all notifications
 async function fetchNotifications() {
   try {
-    const response = await fetch(`${baseURL}/notifications/?email=${email}`, {
+    const response = await fetch(`${baseURL}/get_notifications/${encodeURIComponent(email)}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel,EmailStr
+from pydantic import BaseModel,EmailStr, Field
 from typing import List , Optional
 from datetime import datetime
 
@@ -43,6 +43,7 @@ class Task(BaseModel):
     deadline:datetime
     assigned_by:str
     assigned_to:str
+    documents:Optional[List[str]]=Field(default=[],description="List of Uploaded document urls")
 
 class UserProfile(BaseModel):
     name:str
@@ -69,6 +70,19 @@ class Notification(BaseModel):
 class EmployeeResponse(BaseModel):
     employees:List[Employee]
     total:int
+
+class LeaveRequest(BaseModel):
+    id:Optional[str] = Field(None , alias = "_id")
+    email:str
+    reason:str
+    status:str ="Pending"
+
+class LeaveResponse(BaseModel):
+    id:str
+    status:str
+
+class LeaveStatusUpdate(BaseModel):
+    status:str
 
 
 
