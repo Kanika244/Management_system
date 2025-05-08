@@ -1,3 +1,4 @@
+const baseURL = "http://127.0.0.1:8000";
 document.addEventListener("DOMContentLoaded", function () {
   fetchEmployees(); // Fetch employees when the page loads
 
@@ -74,16 +75,19 @@ async function fetchEmployees() {
 // Function to delete an employee by ID
 async function deleteEmployee(id) {
   try {
-    const response = await fetch(`/employees/${id}`, {
+    const response = await fetch(`${baseURL}/employees/${id}`, {
       method: "DELETE",
     });
 
-    if (response.ok) {
-      alert("Employee deleted successfully!");
-      fetchEmployees(); // Refresh the employee list
-    } else {
-      throw new Error("Failed to delete employee.");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new error(`HTTP error! status: ${response.status}, detail: ${errorData.detail}`)
+      
     }
+    const data = await response.json();
+    console.log(data.message);
+    fetchEmployees(); // Refresh the employee list
+    
   } catch (error) {
     console.error("Error deleting employee:", error);
     alert("Error: " + error.message);

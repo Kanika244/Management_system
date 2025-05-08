@@ -1,10 +1,12 @@
 import os
 from fastapi import File, HTTPException, Depends,APIRouter, UploadFile
 from bson import ObjectId
-from database import task_collection , leave_collection
+from database import task_collection , leave_collection , holiday_collection
 import aiofiles
 from routes.auth import get_current_user
 from models import LeaveRequest , LeaveResponse
+from file_exceptions import InvalidFileTypeException
+
 
 
 
@@ -62,9 +64,12 @@ async def upload_task_document(task_id: str, file: UploadFile = File(...), curre
     # Generate file path
     file_ext = file.filename.split(".")[-1]
     if file_ext not in ["pdf", "docx", "png", "jpg", "jpeg"]:
-        raise HTTPException(status_code=400, detail="Unsupported file format")
+        print("File not supported")
+        raise InvalidFileTypeException(f"Unsupported file type {file_ext}")
 
-    file_path = os.path.join(UPLOAD_DIR, f"{task_id}_{file.filename}")
+
+    file_name = f"{task_id}_{file.filename}"
+    file_path = os.path.join(UPLOAD_DIR, file_name)
 
     # Save file asynchronously
     async with aiofiles.open(file_path, "wb") as out_file:
@@ -72,7 +77,7 @@ async def upload_task_document(task_id: str, file: UploadFile = File(...), curre
         await out_file.write(content)
 
     # Update task with file URL
-    file_url = f"/{UPLOAD_DIR}/{file.filename}"
+    file_url = f"/{UPLOAD_DIR}/{file_name}"
     await task_collection.update_one(
         {"_id": ObjectId(task_id)},
         {"$push": {"documents": file_url}}
@@ -90,6 +95,17 @@ async def request_leave(leave:LeaveRequest):
         return {"message":"Leave Request submitted successfully","id":str(result.inserted_id)}
     except Exception as e:
         raise HTTPException(status_code=500,detail=f"Error submitting leave request: {str(e)}")
+    
+
+@router.get("/holidays")
+async def get_holidays():
+    try:
+        holidays = await holiday_collection.find().to_list(length=None)
+        return {"holidays":holidays}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500,detail=f"Error fetching holidays,{str(e)}")
+
 
 
 

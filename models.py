@@ -3,8 +3,8 @@ from typing import List , Optional
 from datetime import datetime
 
 class User(BaseModel):
-    name:str
-    email:EmailStr
+    name:str= Field(..., pattern="^[A-Za-z ]{2,}$", description="Name should contain only letters and spaces, min 2 characters.")
+    email:str = Field(...,pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",description="Invalid email format.")
     password:str
     role:str
 
@@ -13,11 +13,12 @@ class LoginRequest(BaseModel):
     password:str
 
 class Employee(BaseModel):
-    id:str=None
+    _id:Optional[str]=None
     name:str
     role:str
     job_title:str
     department:str
+    face_data:Optional[bytes]=None
 
 
 class EmployeeUpdate(BaseModel):
@@ -28,7 +29,7 @@ class EmployeeUpdate(BaseModel):
 
 class Review(BaseModel):
     employee_email:str
-    task_id:str
+    task_id:str = Field(...,pattern="^[a-fA-F0-9]{24}$",description="Invalid TaskID format")
     rating:int
     comments:str
     review_date:datetime
@@ -58,7 +59,7 @@ class UserUpdate(BaseModel):
 
 class OTPverify(BaseModel):
     email:EmailStr
-    otp:str
+    otp:str = Field(...,pattern="^d{6}$", description="OTP should be 6 digit")
 
 class Notification(BaseModel):
     id:str = None
@@ -74,7 +75,7 @@ class EmployeeResponse(BaseModel):
 class LeaveRequest(BaseModel):
     id:Optional[str] = Field(None , alias = "_id")
     email:str
-    reason:str
+    reason:str  =Field(...,min_length=5,max_length=500,description="Reason should be 5-500 characters long")
     status:str ="Pending"
 
 class LeaveResponse(BaseModel):
@@ -83,6 +84,36 @@ class LeaveResponse(BaseModel):
 
 class LeaveStatusUpdate(BaseModel):
     status:str
+
+class DeleteResponse(BaseModel):
+    message:str
+
+class Holiday(BaseModel):
+    name:str
+    date:datetime
+    type:str
+
+class ChatRequest(BaseModel):
+    user_message:str
+
+class Attendance(BaseModel):
+    id: Optional[str]
+    face_img: bytes
+    timestamp: datetime
+    status: str
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

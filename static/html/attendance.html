@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Attendance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        video, canvas {
+            border: 2px solid black;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Face Attendance System</h2>
+
+    <video id="video" width="320" height="240" autoplay></video>
+    <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+    <br>
+    <button onclick="captureAndSend()">Capture & Mark Attendance</button>
+    <p id="response"></p>
+
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+
+        // Start webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((error) => {
+                console.error("Error accessing webcam: ", error);
+            });
+
+        function captureAndSend() {
+            // Capture image from video
+            context.drawImage(video, 0, 0, 320, 240);
+            const imageData = canvas.toDataURL("image/jpeg"); // Convert to Base64
+
+            fetch("http://127.0.0.1:8000/attendance", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ face_img: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerText = data.message;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+
+</body>
+</html>

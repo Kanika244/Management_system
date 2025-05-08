@@ -1,8 +1,8 @@
 import os
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import FileResponse
-from database import user_collection, task_collection , employee_collection  # MongoDB connection
-from models import Task  , Employee,EmployeeResponse# Task model
+from database import user_collection, task_collection , employee_collection ,  holiday_collection # MongoDB connection
+from models import Task  , Employee,EmployeeResponse , Holiday
 from typing import List
 from datetime import datetime
 
@@ -124,5 +124,25 @@ async def download_document(filename: str):
         raise HTTPException(status_code=404, detail="File not found")
     
     return FileResponse(file_path, filename=filename)
+
+
+@router.post("/add_holiday")
+async def add_holiday(holiday:Holiday):
+    existing_holiday = await holiday_collection.find_one({"date":holiday.date})
+    if existing_holiday:
+        raise HTTPException(status_code=400,detail="Holiday already exists")
+    
+    new_holiday = holiday.dict()
+    #new_holiday[dict]=datetime.combine(holiday.date , datetime.min.time())
+    await holiday_collection.insert_one(new_holiday)
+    return {"message":"Holiday inserted successfully"}
+
+
+@router.get("/get_holidays",response_model=List[Holiday])
+async def get_holidays():
+    holidays = await holiday_collection.find().to_list(length=None)
+    return holidays 
+
+
 
     

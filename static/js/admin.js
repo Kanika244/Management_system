@@ -63,8 +63,8 @@ async function fetchLeaveRequests() {
               <td>${request.status}</td>
               <td>
                   ${request.status === "Pending" ? `
-                      <button class="approve-btn" onclick="updateLeaveStatus('${request.id}', 'Approved')">Approve</button>
-                      <button class="reject-btn" onclick="updateLeaveStatus('${request.id}', 'Rejected')">Reject</button>
+                      <button class="approve-btn" onclick="updateLeaveStatus('${request._id}', 'Approved')">Approve</button>
+                      <button class="reject-btn" onclick="updateLeaveStatus('${request._id}', 'Rejected')">Reject</button>
                   ` : request.status}
               </td>
           `;
@@ -307,6 +307,7 @@ async function fetchTasks() {
 
       const taskList = document.getElementById("taskList")
       taskList.innerHTML = ""; 
+      const currentDate = new Date();
 
       tasks.All_Tasks.forEach(task => {
             const row = document.createElement("tr");
@@ -317,6 +318,10 @@ async function fetchTasks() {
                   .map(doc => `<a href="${baseURL}/download_document/${doc.split("/").pop()}" target="_blank">Download</a>`)
                   .join(", ");
             }
+
+            let deadlineDate = task.deadline ? new Date(Date.parse(task.deadline)):null;
+            let isOverdue = deadlineDate && deadlineDate < currentDate;
+
             
             row.innerHTML = `
                 <td>${task.title}</td>
@@ -328,6 +333,13 @@ async function fetchTasks() {
                 <td>${task.assigned_to}</td>
                 <td> ${documentLinks}</td>
             `;
+
+            if (isOverdue) {
+              row.style.backgroundColor = "#ffcccc"; // Light red for overdue tasks
+              row.style.color = "red"; // Text color red
+              row.style.fontWeight = "bold"; // Make text bold
+          }
+
             
             taskList.appendChild(row);
         });
@@ -339,6 +351,11 @@ async function fetchTasks() {
 
 
 document.addEventListener("DOMContentLoaded", fetchTasks);
+
+function redirectToholiday(){
+  window.location.href="/static/html/holiday.html";
+
+}
 
 function redirectToNotifications() {
     window.location.href = "/static/html/notifications.html";

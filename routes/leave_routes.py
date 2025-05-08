@@ -23,6 +23,9 @@ async def get_leave_requests():
 @router.patch("/update_leave_status/{id}")
 async def update_leave_status(id: str, update_data:LeaveStatusUpdate):
     try:
+        if not ObjectId.is_valid(id):
+            raise HTTPException(status_code=400, detail="Invalid leave request ID format")
+
         result = await leave_collection.update_one(
             {"_id": ObjectId(id)},
             {"$set": {"status": update_data.status}}

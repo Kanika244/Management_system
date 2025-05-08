@@ -56,19 +56,24 @@ async def register_user(data:User):
         "otp":otp,
         "expires_at":datetime.utcnow()+timedelta(minutes=5)
 }
-    
-    await otp_collection.insert_one(otp_data)
-
-    send_email_smtplib(
-        sender_email="kanikajain0610@gmail.com",
-        recipient_email=data.email,
-        subject="Your OTP Code",
-        body=f"Your OTP is {otp}. It will expire in 5 minutes.",
-        smtp_server="smtp.gmail.com",
-        smtp_port=587,
-        username="kanikajain0610@gmail.com",
-        password="shqa nqzt cbbl ctoh",
-    )
+    print(otp_data)
+    try:
+        store_otp = await otp_collection.insert_one(otp_data)
+        print(store_otp)
+    except Exception as e:
+        raise HTTPException(status_code=400,detail=f"Error storing data {str(e)}")
+        
+    if store_otp:
+        send_email_smtplib(
+            sender_email="kanikajain0610@gmail.com",
+            recipient_email=data.email,
+            subject="Your OTP Code",
+            body=f"Your OTP is {otp}. It will expire in 5 minutes.",
+            smtp_server="smtp.gmail.com",
+            smtp_port=587,
+            username="kanikajain0610@gmail.com",
+            password="shqa nqzt cbbl ctoh",
+        )
 
     return{"message":"User Registered Successfully! OTP sent."}
 
@@ -79,9 +84,11 @@ async def verify_otp(data:OTPverify):
     otp = data.otp
     print(f"Recieved otp {otp}")
     otp_record = await otp_collection.find_one({"email":email})
+    print(otp_record)
     print("Record found")
     
     if not otp_record :
+        print("otp not found")
         raise HTTPException(status_code=400,detail="Invalid OTP")
     
     if  otp_record["otp"]!=otp:

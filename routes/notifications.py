@@ -36,4 +36,17 @@ async def get_notifications(email: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching notifications: {str(e)}")
     
+@router.get("/get_allnotifications")
+async def get_all():
+    try:
+        notifications = await notification_collection.find({}).to_list(length=None)
+
+        for noti in notifications:
+            noti["id"] = str(noti["_id"])
+            del noti["_id"]
+
+        return notifications
+    except Exception as e :
+        raise HTTPException(status_code=500,detail=f"Error fetching notifications{str(e)}")
+    
 

@@ -6,20 +6,30 @@ function redirectToDashboard() {
   window.location.href = "/static/html/admin_dashboard.html";
 }
 
-// Fetch and display all notifications
-async function fetchNotifications() {
+async function fetchallNotifications(){
   try {
-    const response = await fetch(`${baseURL}/get_notifications/${encodeURIComponent(email)}`, {
+    console.log("Fetching all notifications with token:", token);
+
+    const response = await fetch(`${baseURL}/get_allnotifications`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    console.log("Response status:", response.status);
+
     if (!response.ok) {
-      throw new Error("Failed to fetch notifications.");
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch notifications. Status: ${response.status}, Body: ${errorText}`);
     }
 
     const notifications = await response.json();
+    console.log("Received notifications:", notifications);
+
     const notificationList = document.getElementById("notificationList");
-    notificationList.innerHTML = ""; // Clear existing entries
+    notificationList.innerHTML = "";
+
+    if (!Array.isArray(notifications)) {
+      throw new Error("Expected an array, got:", notifications);
+    }
 
     if (notifications.length === 0) {
       notificationList.innerHTML = `<tr><td colspan="4" style="text-align:center;">No notifications available.</td></tr>`;
@@ -29,18 +39,20 @@ async function fetchNotifications() {
     notifications.forEach((notification) => {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td>${notification.email}</td>
-        <td>${notification.title}</td>
-        <td>${notification.message}</td>
-        
+        <td>${notification.email || "N/A"}</td>
+        <td>${notification.title || "N/A"}</td>
+        <td>${notification.message || "N/A"}</td>
       `;
       notificationList.appendChild(row);
     });
   } catch (error) {
-    console.error("Error fetching notifications:", error);
-    alert("Error loading notifications. Please try again.");
+    console.error("Error fetching all notifications:", error);
+    alert("Error loading notifications: " + error.message);
   }
 }
+
+
+
 
 // Handle notification form submission
 document.getElementById("notificationForm").onsubmit = async function (event) {
@@ -70,7 +82,7 @@ document.getElementById("notificationForm").onsubmit = async function (event) {
     if (response.ok) {
       alert("Notification sent successfully!");
       document.getElementById("notificationForm").reset(); // Clear the form
-      fetchNotifications(); // Refresh notifications list
+      fetchallNotifications(); // Refresh notifications list
     } else {
       throw new Error("Failed to send notification.");
     }
@@ -82,4 +94,4 @@ document.getElementById("notificationForm").onsubmit = async function (event) {
 
 
 // Fetch notifications when the page loads
-document.addEventListener("DOMContentLoaded", fetchNotifications);
+document.addEventListener("DOMContentLoaded", fetchallNotifications);

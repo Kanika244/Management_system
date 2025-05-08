@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/register.css">
   <title>Register - Management System</title>
 </head>
 <body>
   <div id="registerContainer">
-    <h1>MANAGEMENT SYSTEM</h1>
-    <h2>Register</h2>
+    <div class="bg"></div>
+    
     <form id="registerForm">
+      <h2 class="heading">Register</h2>
       <label for="name">Name:</label>
       <input type="text" id="name" name="name" required>
       <label for="email">Email:</label>
@@ -24,7 +25,7 @@
         <option value="MANAGER">MANAGER</option>
         <option value="EMPLOYEE">EMPLOYEE</option>
       </select>
-      <button type="submit">Register</button>
+      <button class="register-btn" type="submit">Register</button>
     </form>
     <p id="registerMessage"></p>
     <script src="/static/js/register.js"></script>
